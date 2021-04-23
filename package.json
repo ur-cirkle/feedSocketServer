@@ -1,0 +1,19 @@
+{
+  "name": "feedBackend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "http": "^0.0.1-security",
+    "knex": "^0.21.17",
+    "mysql2": "^2.2.5",
+    "socket.io": "^3.1.0",
+    "uid": "^2.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  }
+}
