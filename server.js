@@ -1,13 +1,19 @@
 //* Pakage Imports
 const http = require("http").createServer();
 const mysql = require("mysql2");
+const momenttz = require("moment-timezone");
+const moment = require("moment");
 const { uid } = require("uid");
 const io = require("socket.io")(http, {
   reconnect: true,
 });
 
 //* Routes
-
+const userConnection = require("./routes/userConnection.route");
+const addBlog = require("./routes/addBlog.route");
+const blogPostLike = require("./routes/blogPostLike.route");
+//* Utils
+const timeCalc = require("./utils/timeCalc");
 //* Connecting Database
 const pool = mysql.createPool({
   host: "localhost",
@@ -18,36 +24,27 @@ const pool = mysql.createPool({
 });
 const db = pool.promise();
 //* Online Users
+console.log(timeCalc("2021-05-06 23:25:35", "America/Los_Angeles"));
 const users = {};
 io.on("connection", (socket) => {
-  socket.on("user_connection", async (data) => {
-    const { userid, currentPosition } = data;
-
-    if (!userid || !currentPosition) return;
-    const [user] = await db.query(
-      `SELECT all_users.userid AS userid,socketid FROM all_users JOIN users_socketid ON all_users.userid = users_socketid.userid WHERE all_users.userid='${userid}'`
-    );
-    if (user.length > 0) {
+  socket.on("user_connection", (data) =>
+    userConnection({ data, db, io, users, socket })
+  );
+  socket.on("add-blog", (data) => addBlog({ data, db, io }));
+  socket.on("blogpost-like", async () =>
+    blogPostLike({ data, db, io, socket })
+  );
+  socket.on("disconnect", async () => {
+    if (users[socket.id]) {
+      console.log(`${users[socket.id].userid} disconnected`);
       await db.query(
-        `UPDATE users_socketid SET socketid = '${socket.id}' WHERE userid ='${userid}'`
-      );
-    } else {
-      await db.query(
-        `INSERT INTO users_socketid(userid, socketid) VALUES('${userid}','${socket.id}')`
+        `UPDATE users_socketid SET socketid=NULL WHERE userid='${
+          users[socket.id].userid
+        }'`
       );
     }
-    users[userid] = {
-      socketid: socket.id,
-      currentPosition,
-    };
-  });
-  socket.on("add-blog", async (data) => {
-    const { blog, userid } = data;
-    const blogid = uid(13);
-    if (!blog || !userid) return;
-    await db.query(
-      `INSERT INTO all_blogs(blogid,userid,blog) VALUES('${blogid}','${userid}','${blog}')`
-    );
+    // remove saved socket from users object
+    delete users[socket.id];
   });
 });
 const port = process.env.PORT || 3003;

@@ -8,6 +8,8 @@
     "express": "^4.17.1",
     "http": "^0.0.1-security",
     "knex": "^0.21.17",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
     "mysql2": "^2.2.5",
     "socket.io": "^4.0.1",
     "uid": "^2.0.0"
