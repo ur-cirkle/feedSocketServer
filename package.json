@@ -9,7 +9,7 @@
     "http": "^0.0.1-security",
     "knex": "^0.21.17",
     "mysql2": "^2.2.5",
-    "socket.io": "^3.1.0",
+    "socket.io": "^4.0.1",
     "uid": "^2.0.0"
   },
   "scripts": {

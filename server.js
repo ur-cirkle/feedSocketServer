@@ -1,54 +1,55 @@
+//* Pakage Imports
 const http = require("http").createServer();
-const knex = require("knex");
-const { uid } = require("uid/secure");
+const mysql = require("mysql2");
+const { uid } = require("uid");
 const io = require("socket.io")(http, {
   reconnect: true,
 });
 
-const db = knex({
-  client: "mysql2",
-  connection: {
-    host: "localhost",
-    user: "root",
-    password: "1234567890",
-    database: "test_db",
-    port: 3306,
-  },
-});
-db.schema.hasTable("private_messages").then(function (exists) {
-  if (!exists) {
-    return db.schema.createTable("private_messages", function (t) {
-      t.increments("id").primary();
-      t.string("sender", 100);
-      t.string("receiver", 100);
-      t.string("text");
-      t.string("chatid");
-      t.string("accepted_by");
-      t.string("seen_by");
-      t.timestamp("created_at").defaultTo(db.fn.now());
-    });
-  }
-});
-const postsandblogs = {};
-io.on("connection", (socket) => {
-  console.log("connected", Date());
-  socket.on("new-post", (data) => {
-    postsandblogs[data.id] = data;
-    socket.emit("post", data);
-  });
-  socket.on("new-blog", (data) => {
-    db("all_blogs").insert();
-  });
-  socket.on("new-like", (data) => {
-    postsandblogs[data.id]["likes"] = postsandblogs[data.id]["likes"]++;
-    socket.emit("like", postsandblogs[data.id]);
-  });
-  socket.on("new-comment", (data) => {
-    postsandblogs[data.id]["comments"][data.comment.id] = data.comment;
-  });
-});
-const port = process.env.PORT || 4000;
+//* Routes
 
-http.listen(port, () => {
-  console.log("server connected");
+//* Connecting Database
+const pool = mysql.createPool({
+  host: "localhost",
+  database: "ur_cirkle",
+  user: "root",
+  password: "1234567890",
+  port: 3306,
 });
+const db = pool.promise();
+//* Online Users
+const users = {};
+io.on("connection", (socket) => {
+  socket.on("user_connection", async (data) => {
+    const { userid, currentPosition } = data;
+
+    if (!userid || !currentPosition) return;
+    const [user] = await db.query(
+      `SELECT all_users.userid AS userid,socketid FROM all_users JOIN users_socketid ON all_users.userid = users_socketid.userid WHERE all_users.userid='${userid}'`
+    );
+    if (user.length > 0) {
+      await db.query(
+        `UPDATE users_socketid SET socketid = '${socket.id}' WHERE userid ='${userid}'`
+      );
+    } else {
+      await db.query(
+        `INSERT INTO users_socketid(userid, socketid) VALUES('${userid}','${socket.id}')`
+      );
+    }
+    users[userid] = {
+      socketid: socket.id,
+      currentPosition,
+    };
+  });
+  socket.on("add-blog", async (data) => {
+    const { blog, userid } = data;
+    const blogid = uid(13);
+    if (!blog || !userid) return;
+    await db.query(
+      `INSERT INTO all_blogs(blogid,userid,blog) VALUES('${blogid}','${userid}','${blog}')`
+    );
+  });
+});
+const port = process.env.PORT || 3003;
+
+http.listen(port, () => console.log(`Server running on port ${port} 🔥`));
