@@ -19,7 +19,7 @@ const pool = mysql.createPool({
   host: "localhost",
   database: "ur_cirkle",
   user: "root",
-  password: "1234567890",
+  password: "123456",
   port: 3306,
 });
 const db = pool.promise();
@@ -34,6 +34,16 @@ io.on("connection", (socket) => {
   socket.on("blogpost-like", async () =>
     blogPostLike({ data, db, io, socket })
   );
+// giving the data to the frontend when it clicks on comment button
+  socket.on("givedatatocomment",async()=>{
+    //writing the query that fetch data for the comment from the given posty id
+    let sql = "select userid,commentid,text from blogpost_comments"
+    let level1 = []
+    
+    for(i =0;i<length(level1);i++){
+      
+    }
+  })
   socket.on("disconnect", async () => {
     if (users[socket.id]) {
       console.log(`${users[socket.id].userid} disconnected`);
