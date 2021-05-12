@@ -25,9 +25,9 @@ timestamp =[]
 created_at ='2021-05-07 11:58:36'
 
 print() 
-print("all_user")
+
 print()
-print('insert into all_user values ',end =" ")
+print('insert into all_users values ',end =" ")
 for i in range(10):
     a =varchar_generator()
     b = varchar_generator()
@@ -45,9 +45,9 @@ for i in range(10):
         print((a,b,c,d,created_at),end=",")
 
 print()
-print("userdetail")
+
 print()
-print('insert into userdetail values ',end =" ")
+print('insert into user_details values ',end =" ")
 for i in range(10):
     a = userid[i]
     b = varchar_generator()
@@ -63,10 +63,10 @@ for i in range(10):
     else:
         print((a,b,bio,dateofbirth,accounttype,gender,public),end=",")
 print()
-print("user_location")
+
 print()  
 print()  
-print('insert into user_location values ',end =" ")
+print('insert into users_location values ',end =" ")
 for i in range(10):
     uid = userid[i]
     timezone = varchar_generator()
@@ -81,10 +81,10 @@ for i in range(10):
 
 print()
 print() 
-print('user_socket')
+
 print() 
 print()  
-print('insert into user_socket values ',end =" ")
+print('insert into users_socketid values ',end =" ")
 for i in range(10):
     uid = userid[i]  
     socket = varchar_generator()
@@ -96,7 +96,7 @@ for i in range(10):
 
 
 print()  
-print('user_communities')
+
 print()  
 print('insert into user_communities values ',end =" ")
 for i in range(10):
@@ -113,7 +113,7 @@ for i in range(10):
 
 print() 
 print() 
-print('all_connection')
+
 print()
 print()
 print('insert into all_connections values ',end =" ")
@@ -130,12 +130,13 @@ for i in range(10):
 
 print()
 print()
-print('all_blogposts')
+
 print()  
 print()
 
 post_blogid =[]
 print('insert into all_blogposts values ',end =" ")
+
 for i in range(10):
     uid = userid[i]
     type1 =  random.choice(('blog','post'))
@@ -154,34 +155,43 @@ for i in range(10):
 
 print()  
 print()
-print('all_commentid')
+
 print() 
 print()  
 commentid =[]
 print('insert into all_commentid values ',end =" ")
-for i in range(10):
+for i in range(30):
     id = varchar_generator()
     commentid.append(id)
     
-    if i==9:
+    if i==29:
         print('("{}")'.format(id),end =";" )
     else:
         print('("{}")'.format(id),end ="," )
 print() 
 print()
-print('blogpost_comment')
+
 print() 
 print()  
 blog_post_commid =[]
-print('insert into blogpost_comment values ',end =" ")
-
+print('insert into blogpost_comments values ',end =" ")
+dict1 = {}
+dict2 = {}
 for i in range(10):
     uid = random.choice(userid)
-    commid = random.choice(commentid)
-    blog_post_commid.append(commid)
+    case1 =True
+
+    while case1:
+        commid = random.choice(commentid)
+        if dict2.get(commid)==None:
+            dict1[commid] = 1
+            case1 = False
+            blog_post_commid.append(commid)
     type1 = random.choice(('text','gif'))
     text1= varchar_generator() 
     recieverid = random.choice(post_blogid)
+
+    dict1[commid] = recieverid
     created_on = created_at                                                                                                                      
     if i==9:
         print((uid,commid,type1,text1,recieverid,created_on),end =";")
@@ -190,60 +200,66 @@ for i in range(10):
 
 print() 
 print()  
-print('comment_replies') 
+
 print()
 print()
 print('insert into comment_replies values ',end =" ")
 for i in range(10):
     uid =random.choice(userid)
-    comentid = random.choice(commentid)
+    case1 = True
+    while case1:
+        comentid = random.choice(commentid)
+        if comentid not in blog_post_commid:
+            case1 = False
     type1 = random.choice(('text','gif'))
     text = varchar_generator() 
-    recieverid = random.choice(commentid)
+    recieverid = random.choice(blog_post_commid)
+    
     created_on = created_at
- 
+    
+    blog_post_commid.append(comentid)
     if i==9:
         print((uid,comentid,type1,text,recieverid,created_on),end=";")
     else:
         print((uid,comentid,type1,text,recieverid,created_on),end=",")
 print()
 print()  
-print('blogpost_likes') 
+
 print()  
 print() 
 likes = [] 
 print('insert into blogpost_likes values ',end =" ")
 for i in range(10):
-    uid = varchar_generator() 
-    likes.append(uid) 
     useid = random.choice(userid)
-    type1=  random.choice(('blog','post'))
+   
     recieverid = random.choice(post_blogid)
-    created_on = created_at
+    created_on = created_a
     
+    t
+    type =  random.choice((0,1))
     if i==9:
-        print((uid,useid,type1,recieverid,created_on),end =";")
+        print((useid,recieverid,created_on,type),end =";")
     else:
-        print((uid,useid,type1,recieverid,created_on),end =",")
+        print((useid,recieverid,created_on,type),end =",")
 print() 
 print()
-print('comment_likes')
+
 print() 
 print() 
 comment_likes= []
 
 
-print('insert into comment_likes values ',end =" ")
+print('insert into comments_likes values ',end =" ")
 
 for i in range(10):
-    id1 = varchar_generator()
     useid = random.choice(userid)
     comentid = random.choice(commentid)
     created_on = created_at
+    type =  random.choice((0,1))
     if i==9:
-        print((id1,useid,comentid,created_on),end =";")
+        print((useid,comentid,created_on,type),end =";")
     else:
-        print((id1,useid,comentid,created_on),end =",")
+        print((useid,comentid,created_on,type),end =",")
 
 # d =[('SxvnnXhMKF', 'idmienWHeg', 'TWpgznVCUS', 'pending'),('vgJfApZHHO', 'YdpJEhDDPI', 'QypPljZnmZ', 'pending'),('VfwnhXqzBY', 'LQNVUXJcgs', 'idmienWHeg', 'sucess'),('USiTFXmbLL', 'JIGIlUAxHh', 'JIGIlUAxHh', 'sucess'),('qArxRvSNXN', 'YdpJEhDDPI', 'uOOEmEzbMx', 'pending'),('dmsoyvsOKr', 'uOOEmEzbMx', 'YdpJEhDDPI', 'pending'),('SbLKrXjpiL', 'uOOEmEzbMx', 'lgjNjOvNHB', 'pending'),('JYkrDFCUSc', 'evGYwcqmkR', 'idmienWHeg', 'sucess'),('FOGFiSTebe', 'LQNVUXJcgs', 'evGYwcqmkR', 'pending'),('MfDgmaLoSk', 'lgjNjOvNHB', 'idmienWHeg', 'sucess')]
 # print('insert into all_connections values',end=" ")

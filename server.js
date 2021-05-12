@@ -4,6 +4,7 @@ const mysql = require("mysql2");
 const momenttz = require("moment-timezone");
 const moment = require("moment");
 const { uid } = require("uid");
+
 const io = require("socket.io")(http, {
   reconnect: true,
 });
@@ -12,8 +13,10 @@ const io = require("socket.io")(http, {
 const userConnection = require("./routes/userConnection.route");
 const addBlog = require("./routes/addBlog.route");
 const blogPostLike = require("./routes/blogPostLike.route");
+const CommentsData = require("./routes/CommentsData.route")
 //* Utils
 const timeCalc = require("./utils/timeCalc");
+const newBlogPostLike = require("./routes/blogPostLike.route");
 //* Connecting Database
 const pool = mysql.createPool({
   host: "localhost",
@@ -23,26 +26,30 @@ const pool = mysql.createPool({
   port: 3306,
 });
 const db = pool.promise();
-//* Online Users
+
 console.log(timeCalc("2021-05-06 23:25:35", "America/Los_Angeles"));
 const users = {};
 io.on("connection", (socket) => {
   socket.on("user_connection", (data) =>
     userConnection({ data, db, io, users, socket })
+
   );
   socket.on("add-blog", (data) => addBlog({ data, db, io }));
   socket.on("blogpost-like", async () =>
     blogPostLike({ data, db, io, socket })
+
   );
-// giving the data to the frontend when it clicks on comment button
-  socket.on("givedatatocomment",async()=>{
-    //writing the query that fetch data for the comment from the given posty id
-    let sql = "select userid,commentid,text from blogpost_comments"
-    let level1 = []
-    
-    for(i =0;i<length(level1);i++){
-      
-    }
+
+//here the socket likescount is for getting the request of likes from the user and then send the data to the frontend
+socket.on('likescount',async(data)=>{
+  blogPostLike({ data, db, io, socket })
+
+})
+//here the socket will emit the comment data of particular post
+  socket.on("givedatatocomment",async(postid)=>{
+   
+    CommentsData({postid,db,io,socket});
+   
   })
   socket.on("disconnect", async () => {
     if (users[socket.id]) {
@@ -57,6 +64,80 @@ io.on("connection", (socket) => {
     delete users[socket.id];
   });
 });
+
+
+
+const checking = async()=>{
+  data1 = "QUOisrFXVC";
+  let sql = `select * from blogpost_comments where blogpost_comments.receiverid = '${data1}';`
+  const [initial_post_comments_data,column1] = await db.query(sql)
+
+var x;
+
+for (x in initial_post_comments_data ){
+
+  sql =`select * from likes_count where likes_count.id = '${initial_post_comments_data[x].commentid}';`
+
+  const[row4,column4] = await db.query(sql);
+  
+  initial_post_comments_data[x]['likes'] = row4[0].counting;
+
+  
+
+}
+
+const post_comment = [];
+post_comment.unshift(...initial_post_comments_data);
+ creating_object_storing_connection = {}
+ let count = 0;
+   
+    while (initial_post_comments_data.length>0) {
+        
+        sql = `select *from  comments_replies where comments_replies.parentid= '${initial_post_comments_data[0].commentid}';`
+        const [getting_likes,column2] = await db.query(sql);
+    
+        for (x in getting_likes){
+
+        sql =`select * from likes_count where likes_count.id = '${getting_likes[x].commentid}';`
+        const[post_comment,column3] = await db.query(sql);
+        getting_likes[x]['likes'] = post_comment[0].counting;
+
+        }
+
+        creating_object_storing_connection[initial_post_comments_data[0].commentid] = getting_likes;
+        
+
+        
+        initial_post_comments_data.shift();
+        
+        if (getting_likes!=[]){
+          initial_post_comments_data.unshift(...getting_likes);
+        }
+
+      
+    }
+    
+    console.log(post_comment,creating_object_storing_connection);
+
+}
+const getting_like_request = async()=>{
+      let personid = "wtXKCzHnoJ";
+      let type2 = "comment";
+      let commentid1 = "CefJgztTkn";
+      let type1 =1;  
+              
+   
+     let sql = `select checking_person_comment('${personid}','${type2}','${commentid1}',${type1}) as c1;`
+      
+     const [getting_likes,column2] = await db.query(sql);
+
+      console.log(getting_likes);
+        
+
+}
+getting_like_request();
 const port = process.env.PORT || 3003;
 
 http.listen(port, () => console.log(`Server running on port ${port} 🔥`));
+
+
