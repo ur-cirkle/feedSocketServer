@@ -12,7 +12,8 @@
     "moment-timezone": "^0.5.33",
     "mysql2": "^2.2.5",
     "socket.io": "^4.0.1",
-    "uid": "^2.0.0"
+    "uid": "^2.0.0",
+    "verifierjs": "^0.0.3"
   },
   "scripts": {
     "start": "node server.js",

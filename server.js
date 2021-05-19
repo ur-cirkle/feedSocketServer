@@ -22,7 +22,7 @@ const pool = mysql.createPool({
   host: "localhost",
   database: "ur_cirkle",
   user: "root",
-  password: "123456",
+  password: "1234567890",
   port: 3306,
 });
 const db = pool.promise();
