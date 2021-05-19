@@ -15,6 +15,7 @@ const addBlog = require("./routes/addBlog.route");
 const blogPostLike = require("./routes/blogPostLike.route");
 const CommentsData = require("./routes/CommentsData.route")
 const GettingUserAllData = require("./routes/GettingUserAllData.route")
+const connectingUsers = require("./routes/connectingUsers.routes")
 //* Utils
 const timeCalc = require("./utils/timeCalc");
 const newBlogPostLike = require("./routes/blogPostLike.route");
@@ -63,12 +64,9 @@ socket.on('geettingalldataofperson',async(data)=>{
 
 
   //here the socket will gives the data 
-  socket.on("searchbar",async(searchedname)=>{
-     
-     
-    
-     
-      
+  socket.on("connectivity",async(data)=>{
+   
+    connectingUsers({data,db,io,socket})
   })
 
   socket.on("disconnect", async () => {
