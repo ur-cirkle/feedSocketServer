@@ -1,10 +1,8 @@
 //* Pakage Imports
 const http = require("http").createServer();
 const mysql = require("mysql2");
-const momenttz = require("moment-timezone");
-const moment = require("moment");
-const { uid } = require("uid");
-
+require("dotenv").config();
+rushnimu
 const io = require("socket.io")(http, {
   reconnect: true,
 });
@@ -21,11 +19,11 @@ const timeCalc = require("./utils/timeCalc");
 const newBlogPostLike = require("./routes/blogPostLike.route");
 //* Connecting Database
 const pool = mysql.createPool({
-  host: "database-1.cjwgkka2py2d.us-east-2.rds.amazonaws.com",
-  database: "ur_cirkle",
-  user: "root",
-  password: "Kandarp@123",
-  port: 3306,
+  host: process.env.host,
+  database: process.env.database,
+  user: process.env.user,
+  password: process.env.password,
+  port: process.env.port,
 });
 const db = pool.promise();
 
