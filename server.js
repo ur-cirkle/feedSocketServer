@@ -2,7 +2,7 @@
 const http = require("http").createServer();
 const mysql = require("mysql2");
 require("dotenv").config();
-rushnimu
+//rushnimu
 const io = require("socket.io")(http, {
   reconnect: true,
 });
