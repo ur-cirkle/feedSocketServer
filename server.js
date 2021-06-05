@@ -2,14 +2,13 @@
 const http = require("http").createServer();
 const mysql = require("mysql2");
 require("dotenv").config();
-//rushnimu
 const io = require("socket.io")(http, {
   reconnect: true,
 });
 
 //* Routes
 const userConnection = require("./routes/userConnection.route");
-const addBlog = require("./routes/addBlog.route");
+const addBlog = require("./routes/AddBlog.route");
 const blogPostLike = require("./routes/blogPostLike.route");
 const CommentsData = require("./routes/CommentsData.route");
 const GettingUserAllData = require("./routes/GettingUserAllData.route");
