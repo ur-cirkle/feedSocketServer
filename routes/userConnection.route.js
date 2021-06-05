@@ -1,5 +1,5 @@
 const userConnection = async ({ data, users, io, db, socket }) => {
-  const { userid, currentPosition } = data;
+  const { deviceid, currentPosition } = data;
 
   if (!userid || !currentPosition) return;
   const [user] = await db.query(
@@ -14,6 +14,7 @@ const userConnection = async ({ data, users, io, db, socket }) => {
       `INSERT INTO users_socketid(userid, socketid) VALUES('${userid}','${socket.id}')`
     );
   }
+  console.log(user);
   users[socket.id] = {
     userid,
     currentPosition,

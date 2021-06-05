@@ -17,6 +17,7 @@ const addBlog = async ({ data, db, io }) => {
   await db.query(
     `INSERT INTO all_blogposts VALUES('${userid}','blog','${blogid}','${blog}','${heading}',current_timestamp);`
   );
+  
 };
 
 module.exports = addBlog;
