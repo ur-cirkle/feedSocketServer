@@ -31,7 +31,7 @@ const addPost = async({socket,io,db,data})=>{
 
    storingFileLink.push(url);
 
-    sql = `insert into posturl values ('${url}','${image.type}','${postid}');`
+    sql = `insert into posturl(url,imagetype,postid) values ('${url}','${image.type}','${postid}');`
 
     const [answer] =  await db.query(sql);
 
@@ -41,6 +41,14 @@ const addPost = async({socket,io,db,data})=>{
     sql = `select * from (select deviceid,userid from device_connection  where userid = (?)) as c1  inner join socket_id on c1.deviceid = socket_id.deviceid;`
     
     const [all_socketid_deviceid_userid,column] = await db.query(sql,taggedUser);
+
+    sql = `insert into tagging_people(taggedpeople,postid) values`
+
+    for(let tagging of taggedUser){
+       sql+=`('${tagging}','${postid}'),`
+    }
+    
+    const [tagged_one] = await db.query(sql);
       
     for( info of all_socketid_deviceid_userid){
       socket.to(info.socketid).emit("tagged",{username:username,storingFileLink});
