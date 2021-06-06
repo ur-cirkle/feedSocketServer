@@ -5,6 +5,7 @@ require("dotenv").config();
 const io = require("socket.io")(http, {
   reconnect: true,
 });
+const cloudinary = require('cloudinary').v2;
 
 //* Routes
 const userConnection = require("./routes/userConnection.route");
@@ -13,6 +14,7 @@ const blogPostLike = require("./routes/blogPostLike.route");
 const CommentsData = require("./routes/CommentsData.route");
 const GettingUserAllData = require("./routes/GettingUserAllData.route");
 const connectingUsers = require("./routes/connectingUsers.route");
+const addpost = require("./routes/addPost.route");
 //* Utils
 const timeCalc = require("./utils/timeCalc");
 const newBlogPostLike = require("./routes/blogPostLike.route");
@@ -26,10 +28,16 @@ const pool = mysql.createPool({
 });
 const db = pool.promise();
 
+//connecting cloud
+cloudinary.config({
+  cloud_name:process.env.cloud_name,
+  api_key:process.env.api_key,
+  api_secret:process.env.api_secret
+})
+
 console.log(timeCalc("2021-05-06 23:25:35", "America/Los_Angeles"));
 const users = {};
 io.on("connection", (socket) => {
-  console.log("gekhk");
   socket.on("user_connection", (data) =>
     userConnection({ data, db, io, users, socket })
   );
@@ -37,6 +45,13 @@ io.on("connection", (socket) => {
   socket.on("blogpost-like", async (data) =>
     blogPostLike({ data, db, io, socket })
   );
+
+  socket.on("addPost",async(data)=>{
+    //** store the sended data */
+      addpost({socket,io,db,data});
+  }
+  );
+
 
   //here the socket likescount is for getting the request of likes from the user and then send the data to the frontend
   socket.on("likescount", async (data) => {
