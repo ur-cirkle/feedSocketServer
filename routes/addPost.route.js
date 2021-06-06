@@ -9,7 +9,12 @@ const addPost = async({socket,io,db,data})=>{
     sql = `insert into add_post(userid,postid,caption,location) values('${userid}','${postid}','${caption}','${location}');`
   
     const [answer1] =  await db.query(sql);
-    sql = `insert into interest_tag values ${interesttag.join(`${`,'${postid}'`}'),('`)};`
+
+    sql = `insert into interest_tag values`
+
+    for(let tag of interesttag){
+       sql+=`('${tag}','${postid}')`
+    }
     
     const [adding_interesttag] = await db.query(sql);
 
@@ -22,8 +27,6 @@ const addPost = async({socket,io,db,data})=>{
      await cloudinary.uploader.upload(image,(err,result)=>{
        if(err) return socket.emit("failed",{clouderror:"can not upload on cloud the image"})
        url = result.url;
-     
-
   })
 
    storingFileLink.push(url);
@@ -57,7 +60,7 @@ const addPost = async({socket,io,db,data})=>{
     for(naming of names){
    
        
-    socket.to(naming.socketid).emit({storingFileLink,caption,location,interesttag,taggedUser,username,userid,photoid})
+    socket.to(naming.socketid).emit("sendingPost",{storingFileLink,caption,location,interesttag,taggedUser,username,userid,photoid})
 
 
     }
