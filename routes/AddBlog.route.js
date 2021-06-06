@@ -3,14 +3,14 @@ const { uid } = require("uid");
 
 //making the function to store the data
 const addBlog = async ({ data, db, io }) => {
-  const{blog,userid} = data;
+  const{blog,userid,header,interesttag,taggedUser} = data;
 
     let sql;
 
     //** creating postid that will be stored in database */
     const blogid = uid(11);
     
-    sql = `insert into add_blog(userid,blogid,title) values('${userid}','${blogid}','${blog}');`
+    sql = `insert into add_blog(userid,blogid,header) values('${userid}','${blogid}','${blog}');`
   
     const [answer1] =  await db.query(sql);
 
@@ -21,6 +21,19 @@ const addBlog = async ({ data, db, io }) => {
     }
     
     const [adding_interesttag] = await db.query(sql);
+
+    
+    sql = `select * from (select deviceid,userid from device_connection  where userid = (?)) as c1  inner join socket_id on c1.deviceid = socket_id.deviceid;`
+    
+    const [all_socketid_deviceid_userid,column] = await db.query(sql,taggedUser);
+      
+    for( info of all_socketid_deviceid_userid){
+      socket.to(info.socketid).emit("tagged",{username:username,storingFileLink});
+     
+      
+    }
+
+
 
     
     sql = `select * from (select * from(select * from (select * from  all_connection where status = success and (all_connection.connectorid = '${userid}'  or all_connection.connecteeid = '${userid}')) as c1 ,user_details where (user_details.userid = c1.connectorid or user_details.userid = c1.connecteeid ) and user_details.acc_type =personal) as c2 inner join device_connection on c2.userid = device_connection.userid) as c3 inner join users_socketid on user_socketid.deviceid = device_connection.deviceid;`
