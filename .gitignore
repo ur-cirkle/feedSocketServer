@@ -116,3 +116,4 @@ dist
 .pnp.*
 yarn.lock
 .env
+.DS_Store
