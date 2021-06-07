@@ -43,7 +43,10 @@ io.on("connection", (socket) => {
   );
   socket.on("add-blog", (data) => addBlog({ data, db, io }));
   socket.on("blogpost-like", async (data) =>
-    blogPostLike({ data, db, io, socket })
+  {
+        addBlog({ data, db, io });
+   }
+
   );
 
   socket.on("addPost",async(data)=>{
