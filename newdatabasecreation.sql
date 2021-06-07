@@ -41,3 +41,30 @@ create table device_connection(deviceid varchar(50) primary key,userid VARCHAR(1
 drop table device_connection;
 
 create table socket_id(deviceid varchar(50),foreign key(deviceid) references device_connection(deviceid),socketid varchar(20));
+
+
+create table blogsaving(userid VARCHAR(11),	FOREIGN KEY(userid) REFERENCES all_users(userid) ON DELETE CASCADE,blogmaking text(50000),header varchar(100));
+
+
+
+//function
+
+
+CREATE DEFINER=`root`@`%` FUNCTION `new_function`(blog1 text(50000),userid1 varchar(11),heading1 varchar(100)) RETURNS int
+BEGIN
+declare totalCount int default 0 ;
+declare result int default 0 ;
+select count(userid)  into totalCount from blogsaving where userid = userid1;
+
+if(totalCount <10) then 
+insert into blogsaving(blogmaking,userid,header)  values(blog1,userid1,heading1);
+set result  = 1;
+else
+set result  = 0;
+end if ;
+
+RETURN result;
+END
+
+
+
