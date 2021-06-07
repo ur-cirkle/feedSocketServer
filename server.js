@@ -15,7 +15,7 @@ const CommentsData = require("./routes/CommentsData.route");
 const GettingUserAllData = require("./routes/GettingUserAllData.route");
 const connectingUsers = require("./routes/connectingUsers.route");
 const commentsDataRoute =  require("./routes/CommentsData.route")
-const addpost = require("./routes/addPost.route");
+const addPost = require("./routes/addPost.route");
 //* Utils
 const timeCalc = require("./utils/timeCalc");
 const newBlogPostLike = require("./routes/blogPostLike.route");
@@ -54,11 +54,11 @@ io.on("connection", (socket) => {
 
   socket.on("addPost",async(data)=>{
     //** store the sended data */
-      addpost({socket,io,db,data});
+      addPost({socket,io,db,data});
   }
   );
 
-  
+
   socket.on("writtingComment",async(data)=>{
     //** when comment has been written*/
     commentsDataRoute({socket,db,data});

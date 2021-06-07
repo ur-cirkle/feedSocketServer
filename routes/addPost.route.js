@@ -80,3 +80,5 @@ const addPost = async({socket,io,db,data})=>{
   
 
 }
+
+module.exports = addPost;
