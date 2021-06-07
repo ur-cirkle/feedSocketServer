@@ -1,6 +1,9 @@
+const {uid} = require('uid');
+
 const commentsDataRoute = async({socket,db,data})=>{
 
-   const{parentid,childid,userid,postid,comment} = data;
+   const{parentid,userid,postid,comment} = data;
+   const childid = uid(11);
    sql = `insert into all_commentid values('${childid}','${userid}','${comment}');`
 
    const[storingCommentId] =  await query(sql);
@@ -68,7 +71,7 @@ const commentsDataRoute = async({socket,db,data})=>{
  
 
    }
-
+   1
 
 }
 
