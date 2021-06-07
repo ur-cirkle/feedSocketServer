@@ -72,6 +72,11 @@ const addPost = async({socket,io,db,data})=>{
 
 
     }
+
+ sql = `insert into all_commentid values('${postid}','${userid}');`
+
+ 
+ const[storingCommentId] =  await query(sql);
   
 
 }

@@ -53,6 +53,11 @@ const addBlog = async ({ data, db, io }) => {
     socket.to(naming.socketid).emit("sendingblog",{header,userid,username})
 
     }
+
+    sql = `insert into all_commentid values('${blogid}');`
+
+ 
+    const[storingCommentId] =  await query(sql);
 };
 
 module.exports = addBlog;
