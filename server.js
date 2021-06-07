@@ -14,6 +14,7 @@ const blogPostLike = require("./routes/blogPostLike.route");
 const CommentsData = require("./routes/CommentsData.route");
 const GettingUserAllData = require("./routes/GettingUserAllData.route");
 const connectingUsers = require("./routes/connectingUsers.route");
+const commentsDataRoute =  require("./routes/CommentsData.route")
 const addpost = require("./routes/addPost.route");
 //* Utils
 const timeCalc = require("./utils/timeCalc");
@@ -49,19 +50,28 @@ io.on("connection", (socket) => {
 
   );
 
+
+
   socket.on("addPost",async(data)=>{
     //** store the sended data */
       addpost({socket,io,db,data});
   }
   );
 
+  
+  socket.on("writtingComment",async(data)=>{
+    //** when comment has been written*/
+    commentsDataRoute({socket,db,data});
+  })
 
-  //here the socket likescount is for getting the request of likes from the user and then send the data to the frontend
+
+  //**here the socket likescount is for getting the request of likes from the user and then send the data to the frontend */
   socket.on("likescount", async (data) => {
     blogPostLike({ data, db, io, socket });
   });
 
-  // here the socket getting data of bio for the particular person
+
+  //** here the socket getting data of bio for the particular person */
   socket.on("geettingalldataofperson", async (data) => {
     GettingUserAllData({ data, db, io, socket });
   });

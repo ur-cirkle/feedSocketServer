@@ -25,7 +25,7 @@ const addBlog = async ({ data, db, io }) => {
     
     sql = `select * from (select deviceid,userid from device_connection  where userid = (?)) as c1  inner join socket_id on c1.deviceid = socket_id.deviceid;`
     
-    const [all_socketid_deviceid_userid,column] = await db.query(sql,taggedUser);
+    const [all_socketid_deviceid_userid,column1] = await db.query(sql,taggedUser);
 
     sql = `insert into tagging_people(taggedpeople,postid) values`
 
@@ -40,11 +40,11 @@ const addBlog = async ({ data, db, io }) => {
     }
 
     sql = `select * from (select * from(select * from (select * from  all_connection where status = success and (all_connection.connectorid = '${userid}'  or all_connection.connecteeid = '${userid}')) as c1 ,user_details where (user_details.userid = c1.connectorid or user_details.userid = c1.connecteeid ) and user_details.acc_type =personal) as c2 inner join device_connection on c2.userid = device_connection.userid) as c3 inner join users_socketid on user_socketid.deviceid = device_connection.deviceid;`
-    const [names,column] = await db.query(sql);
+    const [names,column3] = await db.query(sql);
     
     sql = `select * from user_details where userid = '${userid}'`
 
-    const[phototaking,column] = await db.query(sql);
+    const[phototaking,column2] = await db.query(sql);
 
     const photoid = phototaking[0].image;
 
@@ -54,7 +54,7 @@ const addBlog = async ({ data, db, io }) => {
 
     }
 
-    sql = `insert into all_commentid values('${blogid}');`
+    sql = `insert into all_commentid values('${blogid}','${userid}');`
 
  
     const[storingCommentId] =  await query(sql);

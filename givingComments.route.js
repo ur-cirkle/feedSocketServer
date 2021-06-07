@@ -1,3 +1,4 @@
+
 const commentsDataRoute = async({socket,db,data})=>{
 
    const{parentid,childid,userid,postid,comment} = data;
@@ -44,14 +45,34 @@ const commentsDataRoute = async({socket,db,data})=>{
    }
    else{
 
+          
+   sql=`select userid from all_commentid = '${parentid}';`
 
+   const[findingUserId,column] =  await query(sql);
+
+   let userIdFinded = findingUserId[0].userid;
+
+   const storingname = [userIdFinded];
+
+   
+   sql = `select username from all_user where userid ='${userid}';`
+
+   const [fetchingUsername,column] = await query(sql);
+
+   const username = fetchingUsername[0].username;
+
+   sql = `select c1.userid,socket_id.socketid from(select * from device_connection where userid = (?)) as c1 inner join socket_id on socket_id.deviceid= c1.deviceid;`
+
+   const [user_socketid,column2] = await query(sql,storingname);
+
+   for(user of user_socketid){
+    socket.to(user.socketid).emit("sendingCommentToThepeople",{comment,username});
+}
 
 
 
    }
 
-
-   
 
 }
 
