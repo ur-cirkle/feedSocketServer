@@ -15,7 +15,6 @@ for (x in initial_post_comments_data ){
 initial_post_comments_data[x]['likes'] = row4[0].counting;
 
 
-
 }
 
 const post_comment = [];

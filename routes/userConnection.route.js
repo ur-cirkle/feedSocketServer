@@ -1,7 +1,7 @@
 const userConnection = async ({ data, users, io, db, socket }) => {
   const { deviceid, currentPosition } = data;
 
-  if (!userid || !currentPosition) return;
+  if (!deviceid || !currentPosition) return;
   const [user] = await db.query(
     `SELECT all_users.userid AS userid,socketid FROM all_users JOIN users_socketid ON all_users.userid = users_socketid.userid WHERE all_users.userid='${userid}'`
   );
@@ -17,6 +17,7 @@ const userConnection = async ({ data, users, io, db, socket }) => {
   console.log(user);
   users[socket.id] = {
     userid,
+    deviceid,
     currentPosition,
   };
 };

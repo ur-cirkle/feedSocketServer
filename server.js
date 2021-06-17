@@ -5,7 +5,7 @@ require("dotenv").config();
 const io = require("socket.io")(http, {
   reconnect: true,
 });
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require("cloudinary").v2;
 
 //* Routes
 const userConnection = require("./routes/userConnection.route");
@@ -14,7 +14,8 @@ const blogPostLike = require("./routes/blogPostLike.route");
 const CommentsData = require("./routes/CommentsData.route");
 const GettingUserAllData = require("./routes/GettingUserAllData.route");
 const connectingUsers = require("./routes/connectingUsers.route");
-const addpost = require("./routes/addPost.route");
+const commentsDataRoute = require("./routes/CommentsData.route");
+const addPost = require("./routes/addPost.route");
 //* Utils
 const timeCalc = require("./utils/timeCalc");
 const newBlogPostLike = require("./routes/blogPostLike.route");
@@ -30,38 +31,39 @@ const db = pool.promise();
 
 //connecting cloud
 cloudinary.config({
-  cloud_name:process.env.cloud_name,
-  api_key:process.env.api_key,
-  api_secret:process.env.api_secret
-})
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
+});
 
 console.log(timeCalc("2021-05-06 23:25:35", "America/Los_Angeles"));
 const users = {};
 io.on("connection", (socket) => {
+  console.log("jdjfdlss");
   socket.on("user_connection", (data) =>
     userConnection({ data, db, io, users, socket })
   );
   socket.on("add-blog", (data) => addBlog({ data, db, io }));
-  socket.on("blogpost-like", async (data) =>
-  {
-        addBlog({ data, db, io });
-   }
+  socket.on("blogpost-like", async (data) => {
+    addBlog({ data, db, io });
+  });
 
-  );
-
-  socket.on("addPost",async(data)=>{
+  socket.on("addPost", async (data) => {
     //** store the sended data */
-      addpost({socket,io,db,data});
-  }
-  );
+    addPost({ socket, io, db, data });
+  });
 
+  socket.on("writtingComment", async (data) => {
+    //** when comment has been written*/
+    commentsDataRoute({ socket, db, data });
+  });
 
-  //here the socket likescount is for getting the request of likes from the user and then send the data to the frontend
+  //**here the socket likescount is for getting the request of likes from the user and then send the data to the frontend */
   socket.on("likescount", async (data) => {
     blogPostLike({ data, db, io, socket });
   });
 
-  // here the socket getting data of bio for the particular person
+  //** here the socket getting data of bio for the particular person */
   socket.on("geettingalldataofperson", async (data) => {
     GettingUserAllData({ data, db, io, socket });
   });
